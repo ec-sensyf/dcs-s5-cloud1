@@ -1,0 +1,4 @@
+s3://sensyf-service-5/spot4/SPOT4_HRVIR1_XS_20130228_N1_TUILE_EArgentinaD0000B0000.tgz
+s3://sensyf-service-5/spot4/SPOT4_HRVIR1_XS_20130305_N1_TUILE_EArgentinaD0000B0000.tgz
+s3://sensyf-service-5/spot4/SPOT4_HRVIR1_XS_20130310_N1_TUILE_EArgentinaD0000B0000.tgz
+s3://sensyf-service-5/spot4/SPOT4_HRVIR1_XS_20130315_N1_TUILE_EArgentinaD0000B0000.tgz

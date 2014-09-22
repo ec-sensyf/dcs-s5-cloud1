@@ -1,0 +1,5 @@
+s3://sensyf-service-5/landsat8/LC81990332013200LGN00_Refle.tif
+s3://sensyf-service-5/landsat8/LC81990332013184LGN00_Refle.tif
+s3://sensyf-service-5/landsat8/LC81990332013216LGN00_Refle.tif
+s3://sensyf-service-5/landsat8/LC81990332013152LGN00_Refle.tif
+s3://sensyf-service-5/landsat8/LC81990332013248LGN00_Refle.tif
