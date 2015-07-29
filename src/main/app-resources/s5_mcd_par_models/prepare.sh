@@ -8,18 +8,13 @@
 # Version:       ${project.version} (${implementation.build})
 # Description:   ${project.description}
 #
-# Contact: jordi - uv.es
+# Contact: ipl - uv.es
 
 # source the ciop functions (e.g. ciop-log)
 source ${ciop_job_include}
 
 # If you want to have a complete debug information during implementation
 ciop-enable-debug
-
-# Where MCR is installed
-MCR_PATH=$_CIOP_APPLICATION_PATH/MCR/v716
-MATLAB_LAUNCHER=$_CIOP_APPLICATION_PATH/matlab/run_matlab_cmd.sh
-MATLAB_CMD=$_CIOP_APPLICATION_PATH/s5_mcd_seq/s5_mcd_seq
 
 # define the exit codes
 SUCCESS=0
@@ -69,33 +64,8 @@ function softlink()
     cd - >/dev/null
 }
 
-if false ; then
-    # Use ciop-log to log message at different level : INFO, WARN, DEBUG
-    ciop-log "DEBUG" '##########################################################'
-    ciop-log "DEBUG" '# Set of useful environment variables                    #'
-    ciop-log "DEBUG" '##########################################################'
-    ciop-log "DEBUG" "TMPDIR           = $TMPDIR"                  # The temporary directory for the task.
-    ciop-log "DEBUG" "_JOB_ID          = ${_JOB_ID}"               # The job id
-    ciop-log "DEBUG" "_JOB_LOCAL_DIR   = ${_JOB_LOCAL_DIR}"        # The job specific shared scratch space 
-    ciop-log "DEBUG" "_TASK_ID         = ${_TASK_ID}"              # The task id
-    ciop-log "DEBUG" "_TASK_LOCAL_DIR  = ${_TASK_LOCAL_DIR}"       # The task specific scratch space
-    ciop-log "DEBUG" "_TASK_NUM        = ${_TASK_NUM}"             # The number of tasks
-    ciop-log "DEBUG" "_TASK_INDEX      = ${_TASK_INDEX}"           # The id of the task within the job
-    ciop-log "DEBUG" "_CIOP_SHARE_PATH = ${_CIOP_SHARE_PATH}"
-fi
-
-# retrieve the parameters value from workflow or job default value
-clus_fname="`ciop-getparam clus_fname`"
-pred_fname="`ciop-getparam pred_fname`"
-
-# check parameters
-[ -z "$clus_fname" ] && exit $ERR_NOPARAMS
-[ -z "$pred_fname" ] && exit $ERR_NOPARAMS
-
 # Create output directory
-INPDIR="$TMPDIR/input"
 OUTDIR="$TMPDIR/output"
-mkdir -p "$INPDIR"
 mkdir -p "$OUTDIR"
 
 # Read input files from catalog, copy and uncompress them to working dir
@@ -104,18 +74,15 @@ do
     ciop-log "INFO" "Getting and preparing $file_url ..."
     # Input files maybe compressed (.tgz), but ciop-copy uncompress them for us
     CIOPDIR=$(ciop-copy -o "$TMPDIR" "$file_url")
-    # Create softlinks to files in $INPDIR
-    softlink "$CIOPDIR" "$INPDIR"
+    # Create softlinks to files in $OUTDIR
+    softlink "$CIOPDIR" "$OUTDIR"
 done
-
-# Call matlab
-cmd="$MATLAB_LAUNCHER $MCR_PATH $MATLAB_CMD $INPDIR $OUTDIR/$clus_fname $OUTDIR/$pred_fname"
-eval $cmd 1>&2
-[ "$?" == "0" ] || exit $ERR_MCR
 
 # Publish results
 ciop-log "INFO" "Publishing ..."
-ciop-publish -m "$OUTDIR/*"
+#ciop-publish "$OUTDIR/*"
+# Pass whole $OUTDIR instead of individual files
+ciop-publish "$OUTDIR"
 
 exit 0
 
