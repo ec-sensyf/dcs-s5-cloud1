@@ -61,7 +61,7 @@ else
       shift
   done
 
-  # For not embeded files, we need to copy the file and its CTF to a directory where
+  # For not embedded files, we need to copy the file and its CTF to a directory where
   # hadoop can decompress it
   if [ -f "$matlab_cmd.ctf" ] ; then
       echr "Copying $matlab_cmd to $TMPDIR ..."
