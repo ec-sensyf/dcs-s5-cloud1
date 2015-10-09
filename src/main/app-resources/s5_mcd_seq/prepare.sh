@@ -20,6 +20,7 @@ ciop-enable-debug
 SUCCESS=0
 ERR_MCR=1
 ERR_NOPARAMS=2
+ERR_NOINPUTDATASET=3
 
 # add a trap to exit gracefully
 function cleanExit()
@@ -30,6 +31,7 @@ function cleanExit()
      $SUCCESS)       msg="Processing successfully concluded";;
      $ERR_MCR)       msg="Error executing MCR";;
      $ERR_NOPARAMS) msg="Some parameters undefined";;
+     $ERR_NOINPUTDATASET) msg="No input dataset defined (or it does not exists";;
      *)               msg="Unknown error";;
    esac
    [ "$retval" != "0" ] && ciop-log "ERROR" "Error $retval - $msg, processing aborted" || ciop-log "INFO" "$msg"
@@ -64,19 +66,28 @@ function softlink()
     cd - >/dev/null
 }
 
+# Get input parameters
+time_series="`ciop-getparam time_series`"
+time_series="$_CIOP_APPLICATION_PATH/datasets/$time_series"
+
 # Create output directory
 OUTDIR="$TMPDIR/output"
 mkdir -p "$OUTDIR"
 
 # Read input files from catalog, copy and uncompress them to working dir
-while read file_url
-do
-    ciop-log "INFO" "Getting and preparing $file_url ..."
-    # Input files maybe compressed (.tgz), but ciop-copy uncompress them for us
-    CIOPDIR=$(ciop-copy -o "$TMPDIR" "$file_url")
-    # Create softlinks to files in $OUTDIR
-    softlink "$CIOPDIR" "$OUTDIR"
-done
+if [ -f "$time_series" ] ; then
+    while read file_url
+    do
+        ciop-log "INFO" "Getting and preparing $file_url ..."
+        # Input files maybe compressed (.tgz), but ciop-copy uncompress them for us
+        CIOPDIR=$(ciop-copy -o "$TMPDIR" "$file_url")
+        # Create softlinks to files in $INPDIR
+        softlink "$CIOPDIR" "$OUTDIR"
+    done < "$time_series"
+else
+    ciop-log "DEBUG" "Error, input data does not exist: $time_series"
+    exit $ERR_NOINPUTDATASET
+fi
 
 # Publish results
 ciop-log "INFO" "Publishing ..."

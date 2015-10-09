@@ -17,7 +17,7 @@ source ${ciop_job_include}
 ciop-enable-debug
 
 # Where MCR is installed
-MCR_PATH=$_CIOP_APPLICATION_PATH/MCR/v716
+MCR_PATH=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v716
 MATLAB_LAUNCHER=$_CIOP_APPLICATION_PATH/matlab/run_matlab_cmd.sh
 MATLAB_CMD=$_CIOP_APPLICATION_PATH/s5_mcd_seq/s5_mcd_seq
 
@@ -55,8 +55,8 @@ OUTDIR="$TMPDIR/output"
 mkdir -p "$OUTDIR"
 
 # Instead of using ciop-copy (we don't need to write on input files), pass the
-# directory where data is shared. This avoids copying files and is much faster.
-# However, $dir_url MUST be a directory, not individual files.
+# directory where data is mounted / shared. This avoids copying files and is
+# much faster. However, $dir_url MUST be a directory, not individual files.
 read dir_url
 INPDIR="$_CIOP_SHARE_PATH/$(echo $dir_url | cut -d/ -f4-)"
 ciop-log "DEBUG" "Local dir: $INPDIR"
@@ -71,4 +71,3 @@ ciop-log "INFO" "Publishing ..."
 ciop-publish -m "$OUTDIR/*"
 
 exit 0
-

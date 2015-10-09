@@ -26,30 +26,33 @@ else
   # I use echr instead of ciop-log because the second loses parameters :-(
   echr "Parameters received: $@"
 
-  export MCR_CACHE_ROOT=$TMPDIR
+  # This is needed if the generated MCR has CTR embedded
+  MCR_CACHE_ROOT=$TMPDIR;
+  export MCR_CACHE_ROOT;
   #echr "MCR_CACHE_ROOT set to ${MCR_CACHE_ROOT}"
-  
+
   #echo Setting up environment variables
   MCRROOT="$1"
   shift
+
   #echo ---
-  LD_LIBRARY_PATH=.:${MCRROOT}/runtime/glnxa64 ;
-  LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/bin/glnxa64 ;
+  LD_LIBRARY_PATH=.:${MCRROOT}/runtime/glnxa64;
+  LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/bin/glnxa64;
   LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/sys/os/glnxa64;
-	MCRJRE=${MCRROOT}/sys/java/jre/glnxa64/jre/lib/amd64 ;
-	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/native_threads ; 
-	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/server ;
-	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/client ;
-	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE} ;  
-  XAPPLRESDIR=${MCRROOT}/X11/app-defaults ;
+	MCRJRE=${MCRROOT}/sys/java/jre/glnxa64/jre/lib/amd64;
+	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/native_threads;
+	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/server;
+	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/client;
+	LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE};
+  XAPPLRESDIR=${MCRROOT}/X11/app-defaults;
   export LD_LIBRARY_PATH;
   export XAPPLRESDIR;
   #echr "LD_LIBRARY_PATH is ${LD_LIBRARY_PATH}"
-  
+
   # Get matlab function to execute
   matlab_cmd="$1"
   shift
-  
+
   # Get function arguments
   args=
   while [ $# -gt 0 ]; do
@@ -57,6 +60,16 @@ else
       args="${args} ${token}"
       shift
   done
+
+  # For not embeded files, we need to copy the file and its CTF to a directory where
+  # hadoop can decompress it
+  if [ -f "$matlab_cmd.ctf" ] ; then
+      echr "Copying $matlab_cmd to $TMPDIR ..."
+      cp "${matlab_cmd}" "${TMPDIR}/"
+      cp "${matlab_cmd}.ctf" "${TMPDIR}/"
+      matlab_cmd="${TMPDIR}/$(basename ${matlab_cmd})"
+  fi
+
   #eval "${exe_dir}/$matlab_cmd" $args
   echr "run_matlab_cmd: launching $matlab_cmd $args"
   eval "$matlab_cmd" $args
