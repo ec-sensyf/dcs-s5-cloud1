@@ -80,9 +80,8 @@ done
 
 # Publish results
 ciop-log "INFO" "Publishing ..."
-#ciop-publish "$OUTDIR/*"
+ciop-publish "$OUTDIR/*"
 # Pass whole $OUTDIR instead of individual files
-ciop-publish "$OUTDIR"
+#ciop-publish "$OUTDIR"
 
 exit 0
-

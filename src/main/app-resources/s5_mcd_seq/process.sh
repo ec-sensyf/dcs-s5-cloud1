@@ -17,7 +17,6 @@ source ${ciop_job_include}
 ciop-enable-debug
 
 # Where MCR is installed
-MCR_PATH=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v716
 MATLAB_LAUNCHER=$_CIOP_APPLICATION_PATH/matlab/run_matlab_cmd.sh
 MATLAB_CMD=$_CIOP_APPLICATION_PATH/s5_mcd_seq/s5_mcd_seq
 
@@ -62,7 +61,7 @@ INPDIR="$_CIOP_SHARE_PATH/$(echo $dir_url | cut -d/ -f4-)"
 ciop-log "DEBUG" "Local dir: $INPDIR"
 
 # Call matlab
-cmd="$MATLAB_LAUNCHER $MCR_PATH $MATLAB_CMD $INPDIR $OUTDIR $subsampling"
+cmd="$MATLAB_LAUNCHER $MATLAB_CMD $INPDIR $OUTDIR $subsampling"
 eval $cmd 1>&2
 [ "$?" == "0" ] || exit $ERR_MCR
 

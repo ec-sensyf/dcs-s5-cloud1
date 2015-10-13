@@ -17,7 +17,6 @@ source ${ciop_job_include}
 ciop-enable-debug
 
 # Where MCR is installed
-MCR_PATH=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v716
 MATLAB_LAUNCHER=$_CIOP_APPLICATION_PATH/matlab/run_matlab_cmd.sh
 MATLAB_CMD=$_CIOP_APPLICATION_PATH/s5_mcd_par_models/train_predict
 
@@ -42,21 +41,6 @@ function cleanExit()
 }
 trap cleanExit EXIT
 
-if false ; then
-    # Use ciop-log to log message at different level : INFO, WARN, DEBUG
-    ciop-log "DEBUG" '##########################################################'
-    ciop-log "DEBUG" '# Set of useful environment variables                    #'
-    ciop-log "DEBUG" '##########################################################'
-    ciop-log "DEBUG" "TMPDIR           = $TMPDIR"                  # The temporary directory for the task.
-    ciop-log "DEBUG" "_JOB_ID          = ${_JOB_ID}"               # The job id
-    ciop-log "DEBUG" "_JOB_LOCAL_DIR   = ${_JOB_LOCAL_DIR}"        # The job specific shared scratch space 
-    ciop-log "DEBUG" "_TASK_ID         = ${_TASK_ID}"              # The task id
-    ciop-log "DEBUG" "_TASK_LOCAL_DIR  = ${_TASK_LOCAL_DIR}"       # The task specific scratch space
-    ciop-log "DEBUG" "_TASK_NUM        = ${_TASK_NUM}"             # The number of tasks
-    ciop-log "DEBUG" "_TASK_INDEX      = ${_TASK_INDEX}"           # The id of the task within the job
-    ciop-log "DEBUG" "_CIOP_SHARE_PATH = ${_CIOP_SHARE_PATH}"
-fi
-
 # Get parameters
 TRNSAMPLES=`ciop-getparam trnsamples`
 SUBSAMP=`ciop-getparam subsamp`
@@ -70,7 +54,7 @@ OUTDIR="$TMPDIR/train_predict_output"
 mkdir -p "$OUTDIR"
 
 # Process inputs
-#CIOPDIR=""
+INPUT_DIR=""
 while read line
 do
     nmodel=$(echo $line | awk '{print $1}')
@@ -84,18 +68,14 @@ do
     ciop-log "DEBUG" "Line: $line"
     ciop-log "DEBUG" "Parsed as n: $nmodel, g: $gamma, s: $sigma, url: $input_url"
     
-    # Input URL is a dir, the same dir for all iterations, and has to be copy only once
-    #if [ -z "$CIOPDIR" ] ; then
-        #ciop-log "INFO" "Getting and preparing $input_url ..."
-        #CIOPDIR=$(ciop-copy -o "$TMPDIR" "$input_url")
-        # Same 'trick' as in train_param.sh, $input_url already is the shared dir
-        #INDIR="$_CIOP_SHARE_PATH/$(echo $input_url | cut -d/ -f4-)"
-        #ciop-log "DEBUG" "Local dir: $INDIR"
-    #fi
+    # Copy files only once
+    if [ ! -d "$INPUT_DIR" ] ; then
+        INPUT_DIR=$(ciop-copy -o "$TMPDIR" "$input_url")
+    fi
     
     # Call MATLAB
-    #cmd="$MATLAB_LAUNCHER $MCR_PATH $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $input_url $OUTDIR $SUBSAMP $BLOCKS"
-    cmd="$MATLAB_LAUNCHER $MCR_PATH $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $input_url $OUTDIR $SUBSAMP"
+    #cmd="$MATLAB_LAUNCHER $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $input_url $OUTDIR $SUBSAMP $BLOCKS"
+    cmd="$MATLAB_LAUNCHER $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $INPUT_DIR $OUTDIR $SUBSAMP"
     eval $cmd 1>&2
     [ "$?" == "0" ] || exit $ERR_MCR
 done
@@ -110,4 +90,3 @@ fi
 ciop-publish "$OUTDIR/*"
 
 exit 0
-

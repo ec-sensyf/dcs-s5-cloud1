@@ -20,7 +20,8 @@ fi
 #echo "------------------------------------------"
 if [ "x$1" = "x" ]; then
   echo Usage:
-  echo    $0 \<deployedMCRroot\> matlab_cmd args
+  #echo $0 \<deployedMCRroot\> matlab_cmd args
+  echo $0 matlab_cmd args
 else
 
   # I use echr instead of ciop-log because the second loses parameters :-(
@@ -32,8 +33,9 @@ else
   #echr "MCR_CACHE_ROOT set to ${MCR_CACHE_ROOT}"
 
   #echo Setting up environment variables
-  MCRROOT="$1"
-  shift
+  #MCRROOT="$1"
+  #shift
+  MCRROOT=/usr/local/MATLAB/MATLAB_Compiler_Runtime/v716
 
   #echo ---
   LD_LIBRARY_PATH=.:${MCRROOT}/runtime/glnxa64;
@@ -75,4 +77,3 @@ else
   eval "$matlab_cmd" $args
 fi
 exit
-
