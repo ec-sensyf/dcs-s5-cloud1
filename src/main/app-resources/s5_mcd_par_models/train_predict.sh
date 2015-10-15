@@ -62,17 +62,21 @@ do
     sigma=$(echo $line | awk '{print $3}')
     input_url=$(echo $line | awk '{print $4}')
     
-    # TODO: test, change hfds URL by /share path and avoid using ciop-copy
-    # echo $input_url | sed -re 's/^hdfs:\/\/[^\/]+(.*)/${_CIOP_SHARE_PATH}\1/
-    
     ciop-log "DEBUG" "Line: $line"
     ciop-log "DEBUG" "Parsed as n: $nmodel, g: $gamma, s: $sigma, url: $input_url"
     
+    # Publish input_url only once
+    if [ $nmodel -eq 1 ] ; then
+        ciop-log "DEBUG" "Publishing input URL: $input_url"
+        echo $input_url | ciop-publish -s
+    fi
+
     # Copy files only once
     if [ ! -d "$INPUT_DIR" ] ; then
         INPUT_DIR=$(ciop-copy -o "$TMPDIR" "$input_url")
     fi
     
+    ciop-log "INFO" "Predicting with model $nmodel ..."
     # Call MATLAB
     #cmd="$MATLAB_LAUNCHER $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $input_url $OUTDIR $SUBSAMP $BLOCKS"
     cmd="$MATLAB_LAUNCHER $MATLAB_CMD $nmodel $TRNSAMPLES $gamma $sigma $INPUT_DIR $OUTDIR $SUBSAMP"
@@ -81,12 +85,11 @@ do
 done
 
 # Publish results
-ciop-log "INFO" "Publishing ..."
-# Publish HDFS directory where input files reside. Do it only with one of the tasks.
-if [ ${_TASK_INDEX} -eq 0 ] ; then
-    echo $input_url | ciop-publish -s
+# If INPUT_DIR is not defined then this task did not receive inputs, so it did nothing
+if [ -n "$INPUT_DIR" ] ; then
+    # Publish results (all tasks)
+    ciop-log "INFO" "Publishing ..."
+    ciop-publish "$OUTDIR/*"
 fi
-# Publish (copying) results (all tasks)
-ciop-publish "$OUTDIR/*"
 
 exit 0
