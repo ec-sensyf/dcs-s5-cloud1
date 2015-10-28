@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application id="s5_mcd_seq">
-
     <jobTemplates>
         <!-- prepare job template  -->
         <jobTemplate id="prepare">
              <streamingExecutable>/application/s5_mcd_seq/prepare.sh</streamingExecutable>
-             <defaultParameters>
-                 <parameter id="time_series" title="Time series" abstract="Put here the name of the input file containing the files to analyze, for instance 'images_dt1.txt'." scope="runtime">images_dt1.txt</parameter>
-             </defaultParameters>
-             <defaultJobconf>
-                 <property id="ciop.job.max.tasks">1</property>
-             </defaultJobconf>
         </jobTemplate>
         <!-- process job template  -->
         <jobTemplate id="process">
@@ -30,7 +23,7 @@
         <node id="prepare">
             <job id="prepare" />
             <sources>
-                <source refid="file:urls">/application/datasets/images_dt1.txt</source>
+                <source scope="runtime" id="source" title="Time Series" abstract="From dt1 to dt8." refid="file:urls">/application/datasets/images_dt1.txt</source>
             </sources>
             <parameters/>
         </node>
@@ -43,6 +36,4 @@
             <parameters/>
         </node>
     </workflow>
-
 </application>
-

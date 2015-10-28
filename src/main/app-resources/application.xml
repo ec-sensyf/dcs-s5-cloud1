@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application id="s5_mcd_par_models">
-
 	<jobTemplates>
 		<!-- prepare job template  -->
 		<jobTemplate id="prepare">
@@ -59,7 +58,8 @@
 		<node id="prepare">
 			<job id="prepare"></job>
 			<sources>
-				<source refid="file:urls">/application/datasets/images_dt1.txt</source>
+				<source scope="runtime" id="source" title="Time Series" abstract="From dt1 to dt8."
+				 refid="file:urls">/application/datasets/images_dt1.txt</source>
 			</sources>
 			<parameters/>
 		</node>
@@ -99,6 +99,4 @@
 			</parameters>
 		</node>
 	</workflow>
-
 </application>
-

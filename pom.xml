@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>dcs-bash</name>
 	<description>dcs-bash</description>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -94,6 +94,8 @@
 								<!-- <chmod dir="/application" includes="**/s5_mcd_*/*, **/matlab/*" perm="755"/> -->
 								<chmod dir="/application" includes="**/*.sh" perm="775"/>
 								<chmod file="/application/application.xml" perm="664"/>
+								<chmod dir="/application" includes="s5_mcd_*/*.xml" perm="664"/>
+								<chmod dir="/application" includes="**/s5_mcd_seq" perm="775"/>
 								<chmod dir="/application" includes="**/train_params" perm="775"/>
 								<chmod dir="/application" includes="**/train_predict" perm="775"/>								
 								<chmod dir="/application" includes="**/combine_cluster_class" perm="775"/>								

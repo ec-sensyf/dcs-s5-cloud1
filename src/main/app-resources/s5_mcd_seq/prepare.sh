@@ -66,34 +66,24 @@ function softlink()
     cd - >/dev/null
 }
 
-# Get input parameters
-time_series="`ciop-getparam time_series`"
-time_series="$_CIOP_APPLICATION_PATH/datasets/$time_series"
-
 # Create output directory
 OUTDIR="$TMPDIR/output"
 mkdir -p "$OUTDIR"
 
 # Read input files from catalog, copy and uncompress them to working dir
-if [ -f "$time_series" ] ; then
-    while read file_url
-    do
-        ciop-log "INFO" "Getting and preparing $file_url ..."
-        # Input files maybe compressed (.tgz), but ciop-copy uncompress them for us
-        CIOPDIR=$(ciop-copy -o "$TMPDIR" "$file_url")
-        # Create softlinks to files in $INPDIR
-        softlink "$CIOPDIR" "$OUTDIR"
-    done < "$time_series"
-else
-    ciop-log "DEBUG" "Error, input data does not exist: $time_series"
-    exit $ERR_NOINPUTDATASET
-fi
+while read file_url
+do
+    ciop-log "INFO" "Getting and preparing $file_url ..."
+    # Input files maybe compressed (.tgz), but ciop-copy uncompress them for us
+    CIOPDIR=$(ciop-copy -o "$TMPDIR" "$file_url")
+    # Create softlinks to files in $INPDIR
+    softlink "$CIOPDIR" "$OUTDIR"
+done
 
 # Publish results
 ciop-log "INFO" "Publishing ..."
-#ciop-publish "$OUTDIR/*"
+ciop-publish "$OUTDIR/*"
 # Pass whole $OUTDIR instead of individual files
-ciop-publish "$OUTDIR"
+#ciop-publish "$OUTDIR"
 
 exit 0
-

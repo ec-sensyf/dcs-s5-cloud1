@@ -56,9 +56,14 @@ mkdir -p "$OUTDIR"
 # Instead of using ciop-copy (we don't need to write on input files), pass the
 # directory where data is mounted / shared. This avoids copying files and is
 # much faster. However, $dir_url MUST be a directory, not individual files.
+#read dir_url
+#INPDIR="$_CIOP_SHARE_PATH/$(echo $dir_url | cut -d/ -f4-)"
+#ciop-log "DEBUG" "Local dir: $INPDIR"
+
+# Back to ciop-copy, $_CIOP_SHARE_PATH is not available in slave nodes :-(
 read dir_url
-INPDIR="$_CIOP_SHARE_PATH/$(echo $dir_url | cut -d/ -f4-)"
-ciop-log "DEBUG" "Local dir: $INPDIR"
+dir_url=$(dirname "$dir_url")
+INPDIR=$(ciop-copy -o "$TMPDIR" "$dir_url")
 
 # Call matlab
 cmd="$MATLAB_LAUNCHER $MATLAB_CMD $INPDIR $OUTDIR $subsampling"
