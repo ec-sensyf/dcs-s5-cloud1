@@ -9,7 +9,9 @@
         <jobTemplate id="process">
             <streamingExecutable>/application/s5_mcd_seq/process.sh</streamingExecutable>
             <defaultParameters>
-                <parameter id="subsampling" title="Subsampling" abstract="Use the subsampled image for processing (default: 1, i.e. no subsampling)." scope="runtime">1</parameter>
+                <parameter id="dataset" title="Dataset" abstract="Valid values: for SPOT4: Argentina, Morocco, China, Jordan. For LANDSAT_8: Argentina, Spain." scope="runtime" type="opensearch" target="searchTerms">Argentina</parameter>
+                <parameter id="ts" title="Time series" abstract="Time series to use. Put here 1 or 2." scope="runtime">1</parameter>
+                <parameter id="subsampling" title="Subsampling" abstract="Subsample image for processing (default: 1, no subsampling)." scope="runtime">1</parameter>
             </defaultParameters>
             <defaultJobconf>
                 <property id="ciop.job.max.tasks">1</property>
@@ -23,9 +25,15 @@
         <node id="prepare">
             <job id="prepare" />
             <sources>
+                <!--
                 <source scope="runtime" id="source" title="Time Series" abstract="From dt1 to dt8." refid="file:urls">/application/datasets/images_dt1.txt</source>
+                -->
+                <source scope="runtime" id="source" title="Time Series" abstract="Use SPOT4 or LANDSAT_8 in this URL." refid="cas:series" >http://sensyf.terradue.int/catalogue/search/SPOT4/description</source>
             </sources>
-            <parameters/>
+            <parameters>
+                <parameter id="dataset">Argentina</parameter>
+                <parameter id="ts">1</parameter>
+            </parameters>
         </node>
         <!-- node process -->
         <node id="process">
@@ -37,3 +45,4 @@
         </node>
     </workflow>
 </application>
+
