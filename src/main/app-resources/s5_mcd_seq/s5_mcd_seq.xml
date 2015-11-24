@@ -13,9 +13,6 @@
                 <parameter id="ts" title="Time series" abstract="Time series to use. Put here 1 or 2." scope="runtime">1</parameter>
                 <parameter id="subsampling" title="Subsampling" abstract="Subsample image for processing (default: 1, no subsampling)." scope="runtime">1</parameter>
             </defaultParameters>
-            <defaultJobconf>
-                <property id="ciop.job.max.tasks">1</property>
-            </defaultJobconf>
          </jobTemplate>
     </jobTemplates>
 
@@ -45,4 +42,3 @@
         </node>
     </workflow>
 </application>
-

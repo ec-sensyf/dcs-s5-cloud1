@@ -8,10 +8,6 @@
 				<parameter id="dataset" title="Dataset" abstract="Valid values: for SPOT4: Argentina, Morocco, China, Jordan. For LANDSAT_8: Argentina, Spain." scope="runtime" type="opensearch" target="searchTerms">Argentina</parameter>
 				<parameter id="ts" title="Time series" abstract="Time series to use. Put here 1 or 2." scope="runtime">1</parameter>
 			</defaultParameters>
-			<!-- A one job mission :-) ! -->
-			<defaultJobconf>
-				<property id="ciop.job.max.tasks">1</property>
-			</defaultJobconf>
 		</jobTemplate>
 		<!-- train_params job template  -->
 		<jobTemplate id="train_params">
